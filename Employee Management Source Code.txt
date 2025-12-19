@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+
+namespace EmployeeManagement
+{
+    public partial class Employee : Form
+    {
+        public Employee()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=EmployeeDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            con.Open();
+            SqlCommand cnn = new SqlCommand("insert into employees Values (@employeeid,@firstname,@lastname,@gender,@dob,@email,@phone,@address,@hiredate,@salary)", con);
+            cnn.Parameters.AddWithValue("@employeeid", int.Parse(textBox1.Text));
+            cnn.Parameters.AddWithValue("@firstname", textBox2.Text);
+            cnn.Parameters.AddWithValue("@lastname", textBox3.Text);
+            cnn.Parameters.AddWithValue("@Gender", comboBox1.GetItemText(comboBox1.SelectedItem));
+            cnn.Parameters.AddWithValue("@dob", dateTimePicker1.Value.Date);
+            cnn.Parameters.AddWithValue("@email", textBox4.Text);
+            cnn.Parameters.AddWithValue("@phone", textBox5.Text);
+            cnn.Parameters.AddWithValue("@address", textBox6.Text);
+            cnn.Parameters.AddWithValue("@hiredate", dateTimePicker2.Value.Date);
+            cnn.Parameters.AddWithValue("@salary", Convert.ToDecimal(textBox7.Text));
+            cnn.ExecuteNonQuery();
+            con.Close();
+            MessageBox.Show("Record Saved Successfully");
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=EmployeeDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            con.Open();
+            SqlCommand cnn = new SqlCommand("select * from employees", con);
+            SqlDataAdapter da = new SqlDataAdapter(cnn);
+            DataTable table = new DataTable();
+            da.Fill(table);
+            dataGridView1.DataSource = table;
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=EmployeeDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            con.Open();
+            SqlCommand cnn = new SqlCommand("update employees set firstname=@firstname,lastname=@lastname,gender=@gender,dob=@dob,email=@email,phone=@phone,address=@address,hiredate=@hiredate,salary=@salary where employeeid=@employeeid", con);
+            cnn.Parameters.AddWithValue("@employeeid", int.Parse(textBox1.Text));
+            cnn.Parameters.AddWithValue("@firstname", textBox2.Text);
+            cnn.Parameters.AddWithValue("@lastname", textBox3.Text);
+            cnn.Parameters.AddWithValue("@Gender", comboBox1.GetItemText(comboBox1.SelectedItem));
+            cnn.Parameters.AddWithValue("@dob", dateTimePicker1.Value.Date);
+            cnn.Parameters.AddWithValue("@email", textBox4.Text);
+            cnn.Parameters.AddWithValue("@phone", textBox5.Text);
+            cnn.Parameters.AddWithValue("@address", textBox6.Text);
+            cnn.Parameters.AddWithValue("@hiredate", dateTimePicker2.Value.Date);
+            cnn.Parameters.AddWithValue("@Salary", Convert.ToDecimal(textBox7.Text));
+            cnn.ExecuteNonQuery();
+            con.Close();
+            MessageBox.Show("Record Updated Successfully");
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=EmployeeDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            con.Open();
+            SqlCommand cnn = new SqlCommand("delete from employees where employeeid=@employeeid", con);
+            cnn.Parameters.AddWithValue("@employeeid", int.Parse(textBox1.Text));
+            cnn.ExecuteNonQuery();
+            con.Close();
+            MessageBox.Show("Record Deleted Successfully");
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
+            textBox5.Text = "";
+            textBox6.Text = "";
+            textBox7.Text = "";
+        }
+
+        private void Employee_Load(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=EmployeeDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            con.Open();
+            SqlCommand cnn = new SqlCommand("select * from employees", con);
+            SqlDataAdapter da = new SqlDataAdapter(cnn);
+            DataTable table = new DataTable();
+            da.Fill(table);
+            dataGridView1.DataSource = table;
+            label13.Text = table.Rows.Count.ToString();
+        }
+    }
+}
